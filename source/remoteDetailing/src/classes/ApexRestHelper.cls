@@ -60,7 +60,7 @@ global without sharing class ApexRestHelper {
         }
     }
 
-    private static void upsertSobject(List<sObject> upsertList){
+    public static void upsertSobject(List<sObject> upsertList){
         //system.debug('START upsertSobject');
         List<sObject> toUpdate = new List<sObject>();
         List<sObject> toInsert = new List<sObject>();
@@ -97,7 +97,7 @@ global without sharing class ApexRestHelper {
         return result;
     }
 
-    private static String createSuccessJSResponse(SObject[] items) {
+    public static String createSuccessJSResponse(SObject[] items) {
         JSONGenerator gen = JSON.createGenerator(true);
         gen.writeStartObject();
         gen.writeObjectField('result', items);
@@ -123,7 +123,7 @@ global without sharing class ApexRestHelper {
     }
 
 
-    private static String saveMobileStats() {
+    private static String saveMobileStats () {
         String result = '';
 
         RestRequest req = RestContext.request;

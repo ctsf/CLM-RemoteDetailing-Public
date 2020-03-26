@@ -27,10 +27,15 @@ public class Test_ApexRestHelper {
         );
 
         insert application;
+        
+        
+        Task task = new Task();
+        
+        insert task;
 
-        CTPHARMA__Activity__c report = new CTPHARMA__Activity__c();
+        //CTPHARMA__Activity__c report = new CTPHARMA__Activity__c();
 
-        insert report;
+        //insert report;
     }
 
     static testMethod void test_BodyIsNull(){
@@ -125,7 +130,8 @@ public class Test_ApexRestHelper {
     }
 
     static testMethod void test_saveStats(){
-        CTPHARMA__Activity__c report = [select id from CTPHARMA__Activity__c limit 1];
+        CTPHARMA__Activity__c report = new CTPHARMA__Activity__c();
+        Task t = [select id from Task limit 1];
 
 
         RestRequest req = new RestRequest();
@@ -140,7 +146,7 @@ public class Test_ApexRestHelper {
         //test data
         clm__Application__c application = [select Id from clm__Application__c where Name = 'Test' limit 1];
 
-        req.requestBody = Blob.valueOf('{ "action": "l0tx9-mobile", "token": "a0ng1oY4V", "activityId":"'+ report.Id + '", "application": { "Id": "' + application.Id + '" }, "slideIds": ["a0C0H00001OTI26UAH", "dsg", "a0C0H00001OMIkN"] } ');
+        req.requestBody = Blob.valueOf('{ "action": "l0tx9-mobile", "token": "a0ng1oY4V", "activityId":"'+ t.Id + '", "application": { "Id": "' + application.Id + '" }, "slideIds": ["a0C0H00001OTI26UAH", "dsg", "a0C0H00001OMIkN"] } ');
         System.assertNotEquals(null, req.requestBody);
 
 
@@ -148,7 +154,7 @@ public class Test_ApexRestHelper {
         RestContext.request = req;
         RestContext.response = res;
 
-        //Test.setMock(HttpCalloutMock.class, new MockHttpResponseGenereator());
+        // Test.setMock(HttpCalloutMock.class, new MockHttpResponseGenereator());
 
         Test.startTest();
 
@@ -161,7 +167,8 @@ public class Test_ApexRestHelper {
     }
 
     static testMethod void test_unsubscribe(){
-        CTPHARMA__Activity__c report = [select id from CTPHARMA__Activity__c limit 1];
+        CTPHARMA__Activity__c report = new CTPHARMA__Activity__c(); // [select id from CTPHARMA__Activity__c limit 1];
+        Task t = [select id from Task limit 1];  
 
         RestRequest req = new RestRequest();
         System.assertNotEquals(null, req);
@@ -175,7 +182,7 @@ public class Test_ApexRestHelper {
         //test data
         clm__Application__c application = [select Id from clm__Application__c where Name = 'Test' limit 1];
 
-        req.requestBody = Blob.valueOf('{ "action": "unsubscribe", "token": "a0ng1oY4V", "activityId":"'+ report.Id + '" }');
+        req.requestBody = Blob.valueOf('{ "action": "unsubscribe", "token": "a0ng1oY4V", "activityId":"'+ t.Id + '" }');
         System.assertNotEquals(null, req.requestBody);
 
 
@@ -183,10 +190,10 @@ public class Test_ApexRestHelper {
         RestContext.request = req;
         RestContext.response = res;
 
-        //Test.setMock(HttpCalloutMock.class, new MockHttpResponseGenereator());
+        // Test.setMock(HttpCalloutMock.class, new MockHttpResponseGenereator());
 
         Test.startTest();
-
+ 
         ApexRestHelper.doPost();
 
         Test.stopTest();
@@ -217,11 +224,31 @@ public class Test_ApexRestHelper {
         RestContext.request = req;
         RestContext.response = res;
 
-        //Test.setMock(HttpCalloutMock.class, new MockHttpResponseGenereator());
+        // Test.setMock(HttpCalloutMock.class, new MockHttpResponseGenereator());
 
         Test.startTest();
 
         ApexRestHelper.doPost();
+
+        Test.stopTest();
+    }
+    
+    
+    static testMethod void test_upsert_method(){  
+        
+        Task toUpdate = [select id from Task limit 1];
+        
+        Task toInsert = new Task();
+        
+        List<Sobject> testList = new List<Sobject>{toInsert,toUpdate};
+        
+        Test.startTest();
+        
+        ApexRestHelper.upsertSobject(testList);
+        
+        String jsonStr = ApexRestHelper.createSuccessJSResponse(testList);
+         
+        System.assertNotEquals(null, jsonStr);
 
         Test.stopTest();
     }

@@ -8,7 +8,7 @@
 
 # IDE
 .idea
-
+IlluminatedCloud
 
 # LWC VSCode autocomplete
 **/lwc/jsconfig.json
@@ -25,6 +25,7 @@ yarn-error.log*
 
 # Dependency directories
 node_modules/
+package-lock.json
 
 # Eslint cache
 .eslintcache
