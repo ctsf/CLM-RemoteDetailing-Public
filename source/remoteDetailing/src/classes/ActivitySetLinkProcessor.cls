@@ -61,7 +61,7 @@ global class ActivitySetLinkProcessor {
         return isSuccess;
     }
 
-    @future(callout=true)
+    @Future(Callout=true)
     public static void updateSessionInfo(Set<Id> activityIds, String setupJSON) {
         setupData(activityIds, setupJSON);
         String sessionInfo = getSessionInfo();
@@ -189,21 +189,12 @@ global class ActivitySetLinkProcessor {
     }
 
     private static String getSessionInfo() {
-        Boolean isSandbox = false;
-        Organization thisOrg = [SELECT Id, IsSandbox FROM Organization WHERE Id = :UserInfo.getOrganizationId() LIMIT 1];
 
-        isSandbox = thisOrg.IsSandbox;
-
-        String baseUrl;
-        if (isSandbox) {
-            baseUrl = EncodingUtil.urlEncode('https://test.salesforce.com', 'UTF-8');
-        } else {
-            baseUrl = EncodingUtil.urlEncode('https://login.salesforce.com', 'UTF-8');
-        }
+        String baseUrl = Url.getSalesforceBaseUrl().toExternalForm();
 
         HttpRequest request = new HttpRequest();
         String url = BASE_PRESENT_ENDPOINT + '/api/json/getRoomId'
-                + '?cloud_token=' + cloudToken + '&sf_base_url=' + baseUrl + '&org_id=' + Userinfo.getOrganizationId();
+                + '?cloud_token=' + cloudToken + '&sf_base_url=' + baseUrl + '&org_id=' + UserInfo.getOrganizationId();
 
         request.setEndpoint(url);
         request.setMethod('POST');
@@ -376,7 +367,7 @@ global class ActivitySetLinkProcessor {
     private static Boolean checkSelfDetailing(SObject activity){
         Boolean isSelfDetailing = false;
         if (activity.get('RecordTypeId') != null
-                && (selfDetailingRecordTypes.contains(String.valueOf(activity.getSobject('RecordType').get('DeveloperName'))))) {                                  //SMSDetailing - то только в этом случае ставим mobile
+                && (selfDetailingRecordTypes.contains(String.valueOf(activity.getSObject('RecordType').get('DeveloperName'))))) {                                  //SMSDetailing - то только в этом случае ставим mobile
             isSelfDetailing = true;
         }
         return isSelfDetailing;
