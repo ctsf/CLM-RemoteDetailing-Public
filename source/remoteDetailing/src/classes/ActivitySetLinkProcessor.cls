@@ -237,8 +237,6 @@ global class ActivitySetLinkProcessor {
                 System.debug('visit before mobile ' + visit);
                 if (checkSelfDetailing(visit)) {
                     mobilePart = '/mobile';
-                } else {
-                    continue;
                 }
 
                 System.debug('itemMap: ' + itemMap);
