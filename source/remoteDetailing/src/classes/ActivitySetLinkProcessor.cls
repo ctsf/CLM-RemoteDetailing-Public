@@ -190,7 +190,17 @@ global class ActivitySetLinkProcessor {
 
     private static String getSessionInfo() {
 
-        String baseUrl = Url.getSalesforceBaseUrl().toExternalForm();
+        String baseUrl = Url.getSalesforceBaseUrl().toExternalForm();   //  COMMENT THIS LINE FOR USE REMOTE DETAILING ON COMMUNITY LICENSES 
+
+        /* UNCOMMENT THIS BLOCK FOR USE REMOTE DETAILING ON COMMUNITY LICENSES
+        String baseUrl;
+        SObject Profile = Database.query('SELECT UserLicense.Name FROM Profile WHERE Id = \'' + System.UserInfo.getProfileId() + '\' LIMIT 1');
+            if (Profile.getSObject('UserLicense').get('Name') == 'Partner Community'){
+                baseUrl = 'https://qa-purina.cs129.force.com/'; //  SET HERE YOUR COMMUNITY URL
+            } else {
+            	baseUrl = Url.getSalesforceBaseUrl().toExternalForm();   
+            }
+        */
 
         HttpRequest request = new HttpRequest();
         String url = BASE_PRESENT_ENDPOINT + '/api/json/getRoomId'
