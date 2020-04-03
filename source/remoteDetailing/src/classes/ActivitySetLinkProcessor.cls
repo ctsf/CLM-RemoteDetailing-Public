@@ -196,7 +196,7 @@ global class ActivitySetLinkProcessor {
         String baseUrl;
         SObject Profile = Database.query('SELECT UserLicense.Name FROM Profile WHERE Id = \'' + System.UserInfo.getProfileId() + '\' LIMIT 1');
             if (Profile.getSObject('UserLicense').get('Name') == 'Partner Community'){
-                baseUrl = 'https://qa-purina.cs129.force.com/'; //  SET HERE YOUR COMMUNITY URL
+                baseUrl = 'https://community-url.cs129.force.com/'; //  SET HERE YOUR COMMUNITY URL
             } else {
             	baseUrl = Url.getSalesforceBaseUrl().toExternalForm();   
             }
