@@ -15,6 +15,7 @@
     private static final String SOBJECT_API_NAME = 'CTPHARMA__Activity__c'; // <--- API Name of Object
     private static final String LINK_RD_FIELD = 'RDLink__c'; // <--- API name of the field to add remote detailing link
     private static final String APPLICATION_IDS_FIELD = 'ApplicationIds__c'; // <--- API name of the field to collect application Ids
+    private static final String RECORD_TYPE_NAME = 'Visit'; // <--- RecordType DeveloperName of Object
     private static Map<String, String> requiredFieldToValue = new Map<String, String>{
             'CTPHARMA__Result__c' => 'Test Result',
             'CTPHARMA__Description__c' => 'Test Description'
@@ -65,7 +66,8 @@
     }
 
     private static void setRecordType(){
-        List<RecordType> recordTypes = [SELECT Id, DeveloperName FROM RecordType WHERE SobjectType = :SOBJECT_API_NAME];
+        List<RecordType> recordTypes = [SELECT Id, DeveloperName FROM RecordType
+        WHERE SobjectType = :SOBJECT_API_NAME AND DeveloperName = :RECORD_TYPE_NAME];
         if(!recordTypes.isEmpty()){
             recordType = recordTypes[0];
         }
