@@ -11,10 +11,14 @@
 
 @IsTest private class Test_ActivitySetLinkProcessor {
 
-    private static final String sObjectAPIName = 'Account';
-
-    private static final String LINK_RD_FIELD = 'Site';
-    private static final String APPLICATION_IDS_FIELD = 'Description';
+    // Type here API names of necessary object and fields
+    private static final String SOBJECT_API_NAME = 'CTPHARMA__Activity__c'; // <--- API Name of Object
+    private static final String LINK_RD_FIELD = 'RDLink__c'; // <--- API name of the field to add remote detailing link
+    private static final String APPLICATION_IDS_FIELD = 'ApplicationIds__c'; // <--- API name of the field to collect application Ids
+    private static Map<String, String> requiredFieldToValue = new Map<String, String>{
+            'CTPHARMA__Result__c' => 'Test Result',
+            'CTPHARMA__Description__c' => 'Test Description'
+    }; // <--- Required fields => Value for this field
 
     private static RecordType recordType = new RecordType();
 
@@ -22,7 +26,7 @@
         ActivitySetLinkHTTPCalloutMock mockClass = new ActivitySetLinkHTTPCalloutMock();
 
         clm__ApplicationSetup__c applicationSetup = new clm__ApplicationSetup__c();
-        applicationSetup.clm__ActivityObjectAPIName__c = sObjectAPIName;
+        applicationSetup.clm__ActivityObjectAPIName__c = SOBJECT_API_NAME;
         insert applicationSetup;
 
         setRecordType();
@@ -44,7 +48,7 @@
         ActivitySetLinkHTTPCalloutMock mockClass = new ActivitySetLinkHTTPCalloutMock();
 
         clm__ApplicationSetup__c applicationSetup = new clm__ApplicationSetup__c();
-        applicationSetup.clm__ActivityObjectAPIName__c = sObjectAPIName + ',Contact';
+        applicationSetup.clm__ActivityObjectAPIName__c = SOBJECT_API_NAME + ',Contact';
         insert applicationSetup;
 
         setRecordType();
@@ -61,23 +65,27 @@
     }
 
     private static void setRecordType(){
-        List<RecordType> recordTypes = [SELECT Id, DeveloperName FROM RecordType WHERE SobjectType = :sObjectAPIName];
+        List<RecordType> recordTypes = [SELECT Id, DeveloperName FROM RecordType WHERE SobjectType = :SOBJECT_API_NAME];
         if(!recordTypes.isEmpty()){
             recordType = recordTypes[0];
         }
     }
 
     private static Set<Id> insertActivities(){
-        List<Account> activities = new List<Account>();
+        List<SObject> activities = new List<SObject>();
         for (Integer i = 0; i < 10; i++) {
-            Account activity = new Account(
-                    Name = 'test acc ' + i
-            );
+
+            sObject activity = Schema.getGlobalDescribe().get(SOBJECT_API_NAME).newSObject();
+            for(String requiredField : requiredFieldToValue.keySet()){
+                activity.put(requiredField, requiredFieldToValue.get(requiredField)) ;
+            }
+
             if(String.isNotBlank(recordType.Id)){
-                activity.RecordTypeId = recordType.Id;
+                activity.put('RecordTypeId', recordType.Id);
             }
             activities.add(activity);
         }
+
         insert activities;
 
         Set<Id> activityIds = (new Map<Id, SObject>(activities)).keySet();
@@ -97,7 +105,7 @@
     }
 
     private static void activitiesCheck(Set<Id> activityIds) {
-        String query = 'SELECT Id, ' + LINK_RD_FIELD + ' FROM ' + sObjectAPIName + ' ' +
+        String query = 'SELECT Id, ' + LINK_RD_FIELD + ' FROM ' + SOBJECT_API_NAME + ' ' +
                 'WHERE Id IN :activityIds AND ' + LINK_RD_FIELD + ' != NULL';
         List<SObject> activitiesForCheck = Database.query(query);
         for (SObject sObj : activitiesForCheck) {
