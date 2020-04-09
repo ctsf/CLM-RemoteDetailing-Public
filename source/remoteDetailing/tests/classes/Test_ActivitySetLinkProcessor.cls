@@ -19,7 +19,9 @@
     private static Map<String, String> requiredFieldToValue = new Map<String, String>{
             'CTPHARMA__Result__c' => 'Test Result',
             'CTPHARMA__Description__c' => 'Test Description'
-    }; // <--- Required fields => Value for this field
+    }; // <--- Required fields of Object => Value for this field
+    // Note: If we have required reference field, we should create new record in method "insertActivities" below in code
+
 
     private static RecordType recordType = new RecordType();
 
@@ -75,6 +77,13 @@
 
     private static Set<Id> insertActivities(){
         List<SObject> activities = new List<SObject>();
+
+        /* If we have required lookup field, we should create new record, example:
+    Account testAccount = new Account(Name = 'testAccount');
+    insert testAccount;
+    requiredFieldToValue.put('CTPHARMA__AccountId__c', testAccount.Id);
+    */
+
         for (Integer i = 0; i < 10; i++) {
 
             sObject activity = Schema.getGlobalDescribe().get(SOBJECT_API_NAME).newSObject();
