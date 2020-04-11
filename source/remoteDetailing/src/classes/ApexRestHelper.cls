@@ -61,7 +61,7 @@ global without sharing class ApexRestHelper {
     }
 
     public static void upsertSobject(List<sObject> upsertList){
-        //system.debug('START upsertSobject');
+
         List<sObject> toUpdate = new List<sObject>();
         List<sObject> toInsert = new List<sObject>();
         for(sObject item : upsertList){
@@ -77,7 +77,7 @@ global without sharing class ApexRestHelper {
         }
         system.debug('toUpdate >> ' + toUpdate);
         system.debug('toInsert >> ' + toInsert);
-        //system.debug('END upsertSobject');
+
         if(0 < toUpdate.size()){
             update toUpdate;
         }
@@ -158,16 +158,10 @@ global without sharing class ApexRestHelper {
                 activityFields = new String[0];
             }
 
-
             SObject appItem;
-
-            //
             wrapper a = (wrapper)JSON.deserialize(reqBody, wrapper.class);
 
-
-            //Проверяем токен, т.к. сервис открытый
-            if (a.token != 'a0ng1oY4V') {
-                //Нас пытаются взломать. Имитируем что все закончилось успешно.
+            if (a.token != 'a0ng1oY4V'){
                 return createSuccessJSResponse(null);
             }
 
@@ -207,7 +201,6 @@ global without sharing class ApexRestHelper {
                 }
             }
 
-
             appItem = a.application;
 
             if (appItem != null) {
@@ -221,7 +214,6 @@ global without sharing class ApexRestHelper {
                 }
 
                 insert appItem;
-                //upsertsObject(new SObject[] {appItem} );
             }
 
 
@@ -229,7 +221,6 @@ global without sharing class ApexRestHelper {
             if (a.slides != null) {
                 for (SObject item : a.slides) {
 
-                    // link with main stat
                     if (appItem != null) {
                         item.put('clm__ParentId__c', appItem.Id);
                     }
@@ -258,9 +249,7 @@ global without sharing class ApexRestHelper {
 
         return result;
 
-
     }
-
 
     class wrapper {
         public string token;
