@@ -20,8 +20,8 @@ global class ActivitySetLinkProcessor {
 
     private static String cloudToken = '';
 
-    private static String linkRDField = 'RDLink__c';
-    private static String applicationIdsField = 'ApplicationIds__c';
+    private static String linkRDField = '';
+    private static String applicationIdsField = '';
     private static List<String> selfDetailingRecordTypes = new List<String>();
     private static List<String> remoteDetailingRecordTypes = new List<String>();
     private static String startDate = 'CreatedDate';
