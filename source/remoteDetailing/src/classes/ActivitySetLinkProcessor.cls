@@ -1,3 +1,14 @@
+/**
+ * CT CLM Remote Detailing,
+ * Copyright (C) 2007-2020 Customertimes Corp.
+ * 3 Columbus Circle, 15th Floor, #1513
+ * New York, NY 10019
+ * mailto:support@customertimes.com
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 global class ActivitySetLinkProcessor {
     public class SettingsNotFoundException extends Exception {}
     public class ObjectTypeNotFoundInSettingsException extends Exception {}
@@ -20,9 +31,7 @@ global class ActivitySetLinkProcessor {
         Set<Id> activityIdsForAddLink = new Set<Id>();
         String objectTypeName = String.valueOf(activities[0].Id.getSobjectType());
         List<RecordType> recordTypes = [SELECT Id, DeveloperName FROM RecordType WHERE SobjectType = :objectTypeName];
-
         System.debug('all record types ' + recordTypes);
-
         if(recordTypes.isEmpty()){
             activityIdsForAddLink = (new Map<Id,SObject>(activities)).keySet();
         } else {
@@ -40,13 +49,8 @@ global class ActivitySetLinkProcessor {
                 }
             }
         }
-
         System.debug('activityIdsForAddLink size ' + activityIdsForAddLink.size());
         return activityIdsForAddLink;
-    }
-
-    public static Boolean getIsRDEnabled() {
-        return clm__CLMSettings__c.getInstance(UserInfo.getProfileId()).clm__IsRDEnabled__c;
     }
 
     public static Boolean checkBeforeRun(ActivitySetLinkProcessor.Setup setup) {
@@ -57,7 +61,7 @@ global class ActivitySetLinkProcessor {
         return isSuccess;
     }
 
-    @future(callout=true)
+    @Future(Callout=true)
     public static void updateSessionInfo(Set<Id> activityIds, String setupJSON) {
         setupData(activityIds, setupJSON);
         String sessionInfo = getSessionInfo();
@@ -185,21 +189,22 @@ global class ActivitySetLinkProcessor {
     }
 
     private static String getSessionInfo() {
-        Boolean isSandbox = false;
-        Organization thisOrg = [SELECT Id, IsSandbox FROM Organization WHERE Id = :UserInfo.getOrganizationId() LIMIT 1];
 
-        isSandbox = thisOrg.IsSandbox;
+        String baseUrl = Url.getSalesforceBaseUrl().toExternalForm();   //  COMMENT THIS LINE FOR USE REMOTE DETAILING ON COMMUNITY LICENSES 
 
+        /* UNCOMMENT THIS BLOCK FOR USE REMOTE DETAILING ON COMMUNITY LICENSES
         String baseUrl;
-        if (isSandbox) {
-            baseUrl = EncodingUtil.urlEncode('https://test.salesforce.com', 'UTF-8');
-        } else {
-            baseUrl = EncodingUtil.urlEncode('https://login.salesforce.com', 'UTF-8');
-        }
+        SObject Profile = Database.query('SELECT UserLicense.Name FROM Profile WHERE Id = \'' + System.UserInfo.getProfileId() + '\' LIMIT 1');
+            if (Profile.getSObject('UserLicense').get('Name') == 'Partner Community'){
+                baseUrl = 'https://community-url.cs129.force.com/'; //  SET HERE YOUR COMMUNITY URL
+            } else {
+            	baseUrl = Url.getSalesforceBaseUrl().toExternalForm();   
+            }
+        */
 
         HttpRequest request = new HttpRequest();
         String url = BASE_PRESENT_ENDPOINT + '/api/json/getRoomId'
-                + '?cloud_token=' + cloudToken + '&sf_base_url=' + baseUrl + '&org_id=' + Userinfo.getOrganizationId();
+                + '?cloud_token=' + cloudToken + '&sf_base_url=' + baseUrl + '&org_id=' + UserInfo.getOrganizationId();
 
         request.setEndpoint(url);
         request.setMethod('POST');
@@ -207,7 +212,7 @@ global class ActivitySetLinkProcessor {
         request.setHeader('Content-Type', 'application/json');
 
         String messageBody = getMessageBody();
-        System.debug('messageBody ' + JSON.serializePretty(messageBody));
+        System.debug('messageBody ' + messageBody);
 
         request.setBody(messageBody);
         request.setHeader('content-length', String.valueOf(messageBody.length()));
@@ -229,20 +234,20 @@ global class ActivitySetLinkProcessor {
 
         Map<String, VisitItem> visitMap = new Map<String, VisitItem>();
         for (VisitItem item : result) {
-            System.debug ('item in parse response ' + item);
+            System.debug (item);
             visitMap.put(item.visit_id, item);
         }
 
         if (visitMap.size() > 0) {
 
             for (SObject visit : activitiesForAddLink) {
-                System.debug('activitiesForAddLink before add link ' + activitiesForAddLink);
+
                 VisitItem itemMap = visitMap.get(visit.id);
                 String mobilePart = '';
                 System.debug('visit before mobile ' + visit);
-                    if (checkSelfDetailing(visit)) {
-                        mobilePart = '/mobile';
-                    }
+                if (checkSelfDetailing(visit)) {
+                    mobilePart = '/mobile';
+                }
 
                 System.debug('itemMap: ' + itemMap);
 
@@ -281,7 +286,6 @@ global class ActivitySetLinkProcessor {
         Set<String> appIdsSet = new Set<String>();
 
         for (SObject item : activitiesForAddLink) {
-            System.debug('item in get message ' + item);
             String appIds = (String) item.get(applicationIdsField);
 
             if (String.isNotBlank(appIds)) {
@@ -371,7 +375,7 @@ global class ActivitySetLinkProcessor {
     private static Boolean checkSelfDetailing(SObject activity){
         Boolean isSelfDetailing = false;
         if (activity.get('RecordTypeId') != null
-                && (selfDetailingRecordTypes.contains(String.valueOf(activity.getSobject('RecordType').get('DeveloperName'))))) {                                  //SMSDetailing - то только в этом случае ставим mobile
+                && (selfDetailingRecordTypes.contains(String.valueOf(activity.getSObject('RecordType').get('DeveloperName'))))) {                                  //SMSDetailing - то только в этом случае ставим mobile
             isSelfDetailing = true;
         }
         return isSelfDetailing;
