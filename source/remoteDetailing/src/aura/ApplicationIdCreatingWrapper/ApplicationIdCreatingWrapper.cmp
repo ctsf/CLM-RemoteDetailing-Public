@@ -1,0 +1,7 @@
+<!--
+ - Created by sohatto on 21/04/2020.
+ -->
+
+<aura:component implements="force:lightningQuickAction,force:hasRecordId">
+    <c:activityApplicationIds recId="{!v.recordId}"/>
+</aura:component>

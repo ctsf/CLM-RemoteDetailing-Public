@@ -1,0 +1,35 @@
+<!--
+ - Created by sohatto on 21/04/2020.
+ -->
+
+<template>
+    <template if:true={isEnabledRD}>
+        <lightning-dual-listbox name="applications"
+                                label="Select Application Ids"
+                                source-label="Available"
+                                selected-label="Selected"
+                                options={options}
+                                value={defaultOptions}
+                                onchange={handleChange}></lightning-dual-listbox>
+        <div class="slds-text-align_right">
+            </br></br>
+            <lightning-button
+                    class="slds-text-align_left"
+                    label="Save New Applications"
+                    variant="brand"
+                    onclick={handleClick}>
+            </lightning-button>
+        </div>
+    </template>
+
+    <template if:false={isEnabledRD}>
+        <br/><br/><br/>
+        <div class="slds-align_absolute-center">
+            <lightning-icon icon-name="utility:error" alternative-text="Error!" title="Error"></lightning-icon>
+            <span class="slds-m-horizontal--medium "><b>
+                Sorry, you don't have enough permission. Please contact your administrator.
+            </b></span>
+            <lightning-icon icon-name="utility:error" alternative-text="Error!" title="Error"></lightning-icon>
+        </div>
+    </template>
+</template>
