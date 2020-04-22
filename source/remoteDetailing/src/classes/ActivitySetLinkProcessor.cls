@@ -72,7 +72,7 @@ global class ActivitySetLinkProcessor {
         init(setupJSON);
         setCloudToken();
 
-        clm__ApplicationSetup__c settings = clm__ApplicationSetup__c.getOrgDefaults();
+        clm__ApplicationSetup__c settings = clm__ApplicationSetup__c.getInstance();
         if (settings != null) {
             if (String.isNotBlank(settings.clm__ActivityObjectAPIName__c)) {
                 objectType = getObjectType(settings.clm__ActivityObjectAPIName__c, activityIds);
@@ -81,7 +81,7 @@ global class ActivitySetLinkProcessor {
                     setDateFields(settings);
                     setActivitiesForAddLink(activityIds);
                 } else {
-                    throw new ObjectTypeNotFoundInSettingsException('Object Type ' + objectType + 'doesn\'t specify in clm__ActivityObjectAPIName__c');
+                    throw new ObjectTypeNotFoundInSettingsException('Object Type ' + objectType + 'isn\'t specified in clm__ActivityObjectAPIName__c');
                 }
             } else {
                 throw new SettingsNotFoundException('clm__ActivityObjectAPIName__c is empty');
