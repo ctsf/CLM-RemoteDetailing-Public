@@ -18,6 +18,8 @@
 
 (activityApplications.zip - logic for linking Apps to Activity)
 
+P.S. If you make changes in the archive using MacOS, you may get an error from Workbench for the presence of the __ MACOSX system file. Instructions for deleting this file https://wphosting.tv/how-to-remove-__macosx-from-zip-archives/
+
 ## Full guide
 
 http://help.customertimes.com/articles/#!ct-mobile-ios-en/the-remote-detailing-functionality
