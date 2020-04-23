@@ -16,6 +16,8 @@
 1. If needed, in the apex code into archive, replace the API name of the Activity object;
 2. Use Workbench to deploy a zip file with the functionality you need. 
 
+(activityApplications.zip - logic for linking Apps to Activity)
+
 ## Full guide
 
 http://help.customertimes.com/articles/#!ct-mobile-ios-en/the-remote-detailing-functionality
