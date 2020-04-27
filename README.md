@@ -16,7 +16,10 @@
 1. If needed, in the apex code into archive, replace the API name of the Activity object;
 2. Use Workbench to deploy a zip file with the functionality you need. 
 
-(activityApplications.zip - logic for linking Apps to Activity)
+(
+activityApplications.zip - logic for linking Apps to Activity
+RemoteDetailing.zip - logic for requesting RD Session
+)
 
 P.S. If you make changes in the archive using MacOS, you may get an error from Workbench for the presence of the __ MACOSX system file. Instructions for deleting this file https://wphosting.tv/how-to-remove-__macosx-from-zip-archives/
 
