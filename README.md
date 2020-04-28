@@ -17,7 +17,7 @@
 2. Use Workbench to deploy a zip file with the functionality you need. 
 
 (
-activityApplications.zip - logic for linking Apps to Activity
+activityApplications.zip - logic for linking Apps to Activity;
 RemoteDetailing.zip - logic for requesting RD Session
 )
 
