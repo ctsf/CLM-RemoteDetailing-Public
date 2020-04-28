@@ -5,8 +5,8 @@
     - ApexRestHelper
     - Test_ApexRestHelper
     - ActivitySetLinkProcessor
-    - Test_ActivitySetLinkProcessor
     - ActivitySetLinkHTTPCalloutMock
+    - Test_ActivitySetLinkProcessor
 2. Go to Setup → Object Manager → click an Activity object. In the Triggers section, click New and add the following Apex trigger:
     - ActivitySetLinkProcess
 3. If needed, in the trigger’s code, replace the API name of the Activity object;
