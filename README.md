@@ -12,16 +12,16 @@
 3. If needed, in the trigger’s code, replace the API name of the Activity object;
 4. If needed, in the trigger’s code, change API name(s) of fields and record types of an Activity object for Remote Detailing/Self Detailing flow.
 
-## Lightning Actions deploy
-1. If needed, in the apex code into archive, replace the API name of the Activity object;
-2. Use Workbench to deploy a zip file with the functionality you need. 
+## Quick Action to create CLM-Presentation Set on Activity Record in Lightning Experience 
+If needed, download activityApplication.zip, replace API names of objects in the Apex Class, and create a new archive.
+Log in as the administrator on https://workbench.developerforce.com/ and deploy the archive.
+
+For macOS users, there can be an issue with the __MACOSX system file. To delete this file, follow the guide here: http://wphosting.tv/how-to-remove-__macosx-from-zip-archives/.
 
 (
 activityApplications.zip - logic for linking Apps to Activity;
 RemoteDetailing.zip - logic for requesting RD Session
 )
-
-P.S. If you make changes in the archive using MacOS, you may get an error from Workbench for the presence of the __ MACOSX system file. Instructions for deleting this file https://wphosting.tv/how-to-remove-__macosx-from-zip-archives/
 
 ## Full guide
 
