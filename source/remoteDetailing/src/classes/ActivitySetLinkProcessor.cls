@@ -172,7 +172,7 @@ global class ActivitySetLinkProcessor {
     private static void setActivitiesForAddLink(Set<Id> activityIds) {
         List<Id> activityIdsList = new List<Id>(activityIds);
 
-        String condition = ' Id IN  (\'' + String.join(activityIdsList, '\',\'') + '\')';
+        String condition = ' Id IN  (\'' + String.join(activityIdsList, '\',\'') + '\') and ' + applicationIdsField + ' != NULL';
 
         String rows_query = 'SELECT Id, RecordTypeId, RecordType.DeveloperName, CreatedById, ' + linkRDField + ', '
                 + applicationIdsField + ', ' + startDate;
