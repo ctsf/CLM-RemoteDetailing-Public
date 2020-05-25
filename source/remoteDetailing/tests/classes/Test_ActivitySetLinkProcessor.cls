@@ -12,13 +12,14 @@
 @IsTest private class Test_ActivitySetLinkProcessor {
 
     // Type here API names of necessary object and fields
-    private static final String SOBJECT_API_NAME = 'CTPHARMA__Activity__c'; // <--- API Name of Object
+    private static final String SOBJECT_API_NAME = 'Event'; // <--- API Name of Object  'Task', 'CTPHARMA__Activity__c', 'Other activity object'
     private static final String LINK_RD_FIELD = 'RDLink__c'; // <--- API name of the field to add remote detailing link
     private static final String APPLICATION_IDS_FIELD = 'ApplicationIds__c'; // <--- API name of the field to collect application Ids
     private static final String RECORD_TYPE_NAME = 'Visit'; // <--- RecordType DeveloperName of Object
-    private static Map<String, String> requiredFieldToValue = new Map<String, String>{
-            'CTPHARMA__Result__c' => 'Test Result',
-            'CTPHARMA__Description__c' => 'Test Description'
+    private static Map<String, Object> requiredFieldToValue = new Map<String, Object>{
+            'DurationInMinutes' => 30,
+            'ActivityDateTime' => System.today(),
+            'Description' => 'Test Description'
     }; // <--- Required fields of Object => Value for this field
     // Note: If we have required reference field, we should create new record in method "insertActivities" below in code
 
@@ -30,6 +31,7 @@
 
         clm__ApplicationSetup__c applicationSetup = new clm__ApplicationSetup__c();
         applicationSetup.clm__ActivityObjectAPIName__c = SOBJECT_API_NAME;
+        applicationSetup.clm__SessionTimeout__c = 60;
         insert applicationSetup;
 
         setRecordType();
@@ -76,6 +78,11 @@
     }
 
     private static Set<Id> insertActivities(){
+        
+        clm__Application__c app = new clm__Application__c();
+        app.Name='Test1';
+        insert app;
+        
         List<SObject> activities = new List<SObject>();
 
         /* If we have required lookup field, we should create new record, example:
@@ -94,6 +101,9 @@
             if(String.isNotBlank(recordType.Id)){
                 activity.put('RecordTypeId', recordType.Id);
             }
+            
+            activity.put(APPLICATION_IDS_FIELD, app.Id);
+            
             activities.add(activity);
         }
 
