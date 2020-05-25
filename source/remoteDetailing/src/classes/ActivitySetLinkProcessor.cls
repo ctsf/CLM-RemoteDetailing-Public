@@ -26,6 +26,7 @@ global class ActivitySetLinkProcessor {
     private static List<String> remoteDetailingRecordTypes = new List<String>();
     private static String startDate = 'CreatedDate';
     private static String endDate = '';
+    private static Map<string, Object> options;
 
     public static Set<Id> getActivityIdsForAddLink(List<SObject> activities, List<String> selfDetailingRecordTypes, List<String> remoteDetailingRecordTypes) {
         Set<Id> activityIdsForAddLink = new Set<Id>();
@@ -79,6 +80,7 @@ global class ActivitySetLinkProcessor {
 
                 if (String.isNotBlank(objectType)) {
                     setDateFields(settings);
+                    setOptionsFields(settings);
                     setActivitiesForAddLink(activityIds);
                 } else {
                     throw new ObjectTypeNotFoundInSettingsException('Object Type ' + objectType + 'isn\'t specified in clm__ActivityObjectAPIName__c');
@@ -157,7 +159,6 @@ global class ActivitySetLinkProcessor {
                 List<String> endFieds = settings.clm__ActivityEndDateAPI__c.split(',');
                 endDate = endFieds[i].trim();
             }
-
         } else {
             if (String.isNotBlank(settings.clm__ActivityDateAPI__c)) {
                 startDate = settings.clm__ActivityDateAPI__c;
@@ -166,6 +167,13 @@ global class ActivitySetLinkProcessor {
             if (String.isNotBlank(settings.clm__ActivityEndDateAPI__c)) {
                 endDate = settings.clm__ActivityEndDateAPI__c;
             }
+        }
+    }
+
+    private static void setOptionsField(clm__ApplicationSetup__c settings) {
+        if (settings.clm__SessionTimeout__c != null) {
+            options = new Map<string, Object>();
+            options.put('sessionTimeout', settings.clm__SessionTimeout__c);
         }
     }
 
@@ -312,6 +320,10 @@ global class ActivitySetLinkProcessor {
             gen.writeStartObject();
             gen.writeStringField('visit_id', item.Id);
             gen.writeStringField('user_id', (String) item.get('CreatedById'));
+
+            if (options != null) {
+                gen.writeObjectField('options', options);
+            }
 
             if (item.get(startDate) != null) {
                 System.debug('item.get(startDate) ' + String.valueOf(item.get(startDate)));
