@@ -319,6 +319,7 @@ global class ActivitySetLinkProcessor {
         for (SObject item : activitiesForAddLink) {
             gen.writeStartObject();
             gen.writeStringField('visit_id', item.Id);
+            gen.writeStringField('visit_object', String.valueOf(item.getSObjectType()));
             gen.writeStringField('user_id', (String) item.get('CreatedById'));
 
             if (options != null) {
