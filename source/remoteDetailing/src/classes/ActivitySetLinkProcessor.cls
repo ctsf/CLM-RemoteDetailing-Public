@@ -80,7 +80,7 @@ global class ActivitySetLinkProcessor {
 
                 if (String.isNotBlank(objectType)) {
                     setDateFields(settings);
-                    setOptionsFields(settings);
+                    setOptionsField(settings);
                     setActivitiesForAddLink(activityIds);
                 } else {
                     throw new ObjectTypeNotFoundInSettingsException('Object Type ' + objectType + 'isn\'t specified in clm__ActivityObjectAPIName__c');
