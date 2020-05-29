@@ -74,14 +74,18 @@ global class ActivitySetLinkProcessor {
         setCloudToken();
 
         clm__ApplicationSetup__c settings = clm__ApplicationSetup__c.getInstance();
+        clm__CLMSettings__c clmsettings = clm__CLMSettings__c.getInstance();
+        
         if (settings != null) {
             if (String.isNotBlank(settings.clm__ActivityObjectAPIName__c)) {
                 objectType = getObjectType(settings.clm__ActivityObjectAPIName__c, activityIds);
-
+				 
                 if (String.isNotBlank(objectType)) {
                     setDateFields(settings);
-                    setOptionsField(settings);
                     setActivitiesForAddLink(activityIds);
+                    if (clmsettings != null){
+                    	setOptionsField(clmsettings);
+                    }
                 } else {
                     throw new ObjectTypeNotFoundInSettingsException('Object Type ' + objectType + 'isn\'t specified in clm__ActivityObjectAPIName__c');
                 }
@@ -170,7 +174,7 @@ global class ActivitySetLinkProcessor {
         }
     }
 
-    private static void setOptionsField(clm__ApplicationSetup__c settings) {
+    private static void setOptionsField(clm__CLMSettings__c settings) {
         if (settings.clm__SessionTimeout__c != null) {
             options = new Map<string, Object>();
             options.put('sessionTimeout', settings.clm__SessionTimeout__c);
