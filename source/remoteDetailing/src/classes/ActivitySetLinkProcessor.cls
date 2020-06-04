@@ -27,6 +27,7 @@ global class ActivitySetLinkProcessor {
     private static String startDate = 'CreatedDate';
     private static String endDate = '';
     private static Map<string, Object> options;
+    private static clm__CLMSettings__c clmSettings;
 
     public static Set<Id> getActivityIdsForAddLink(List<SObject> activities, List<String> selfDetailingRecordTypes, List<String> remoteDetailingRecordTypes) {
         Set<Id> activityIdsForAddLink = new Set<Id>();
@@ -64,6 +65,8 @@ global class ActivitySetLinkProcessor {
 
     @Future(Callout=true)
     public static void updateSessionInfo(Set<Id> activityIds, String setupJSON) {
+        clmSettings = clm__CLMSettings__c.getOrgDefaults();
+
         setupData(activityIds, setupJSON);
         String sessionInfo = getSessionInfo();
         parseSessionInfo(sessionInfo);
@@ -74,7 +77,6 @@ global class ActivitySetLinkProcessor {
         setCloudToken();
 
         clm__ApplicationSetup__c settings = clm__ApplicationSetup__c.getInstance();
-        clm__CLMSettings__c clmsettings = clm__CLMSettings__c.getInstance();
         
         if (settings != null) {
             if (String.isNotBlank(settings.clm__ActivityObjectAPIName__c)) {
@@ -82,10 +84,8 @@ global class ActivitySetLinkProcessor {
 				 
                 if (String.isNotBlank(objectType)) {
                     setDateFields(settings);
+                    setOptionsField();
                     setActivitiesForAddLink(activityIds);
-                    if (clmsettings != null){
-                    	setOptionsField(clmsettings);
-                    }
                 } else {
                     throw new ObjectTypeNotFoundInSettingsException('Object Type ' + objectType + 'isn\'t specified in clm__ActivityObjectAPIName__c');
                 }
@@ -174,10 +174,21 @@ global class ActivitySetLinkProcessor {
         }
     }
 
-    private static void setOptionsField(clm__CLMSettings__c settings) {
-        if (settings.clm__SessionTimeout__c != null) {
-            options = new Map<string, Object>();
-            options.put('sessionTimeout', settings.clm__SessionTimeout__c);
+    private static void setOptionsField() {
+        options = new Map<string, Object>();
+
+        if (clmSettings != null) {
+            if (clmSettings.clm__SessionTimeout__c != null) {
+                options.put('sessionTimeout', clmSettings.clm__SessionTimeout__c);
+            }
+
+            if (clmSettings.clm__IsRDDetailedStatsEnabled__c  != null) {
+                options.put('isDetailedStatsEnabled', clmSettings.clm__IsRDDetailedStatsEnabled__c);
+            }
+        }
+        else {
+            options.put('sessionTimeout', 0);
+            options.put('isDetailedStatsEnabled', false);
         }
     }
 
@@ -322,6 +333,7 @@ global class ActivitySetLinkProcessor {
         System.debug('activitiesForAddLink size ' + activitiesForAddLink.size());
         for (SObject item : activitiesForAddLink) {
             gen.writeStartObject();
+            gen.writeStringField('org_id', UserInfo.getOrganizationId());
             gen.writeStringField('visit_id', item.Id);
             gen.writeStringField('visit_object', String.valueOf(item.getSObjectType()));
             gen.writeStringField('user_id', (String) item.get('CreatedById'));
