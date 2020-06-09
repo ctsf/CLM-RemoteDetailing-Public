@@ -31,8 +31,13 @@
 
         clm__ApplicationSetup__c applicationSetup = new clm__ApplicationSetup__c();
         applicationSetup.clm__ActivityObjectAPIName__c = SOBJECT_API_NAME;
-        applicationSetup.clm__SessionTimeout__c = 60;
         insert applicationSetup;
+		
+		
+        clm__CLMSettings__c clmSettings = new clm__CLMSettings__c();
+        clmSettings.clm__SessionTimeout__c = 60;
+        insert clmSettings;
+
 
         setRecordType();
         Set<Id> activityIds = insertActivities();

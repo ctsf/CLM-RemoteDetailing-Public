@@ -77,10 +77,11 @@ global class ActivitySetLinkProcessor {
         setCloudToken();
 
         clm__ApplicationSetup__c settings = clm__ApplicationSetup__c.getInstance();
+        
         if (settings != null) {
             if (String.isNotBlank(settings.clm__ActivityObjectAPIName__c)) {
                 objectType = getObjectType(settings.clm__ActivityObjectAPIName__c, activityIds);
-
+				 
                 if (String.isNotBlank(objectType)) {
                     setDateFields(settings);
                     setOptionsField();
