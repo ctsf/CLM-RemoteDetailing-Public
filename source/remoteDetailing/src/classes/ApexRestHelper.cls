@@ -209,6 +209,8 @@ global without sharing class ApexRestHelper {
                     appItem.put(visitLookupName, visitId);
                 }
 
+                appItem.put('clm__IsGuestStats__c', true);    
+
                 if (rtApp != null) {
                     appItem.put('RecordTypeId', rtApp.Id);
                 }
@@ -228,6 +230,8 @@ global without sharing class ApexRestHelper {
                     if (rtSlide != null) {
                         item.put('RecordTypeId', rtSlide.Id);
                     }
+
+                    item.put('clm__IsGuestStats__c', true);
 
                     // link with visit
                     if (String.isNotBlank(visitLookupName) && visitId != null) {
