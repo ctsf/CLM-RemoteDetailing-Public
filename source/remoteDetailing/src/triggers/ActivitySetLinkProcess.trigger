@@ -9,25 +9,23 @@
  * Proprietary and confidential
  */
 
-trigger ActivitySetLinkProcess on CTPHARMA__Activity__c (after insert, after update) {
+trigger EventSetLinkProcess on Event (after insert, after update) {
     if (Trigger.isAfter && (Trigger.isInsert || Trigger.isUpdate)) {
-        if (!System.isFuture() && !System.isBatch()) {
-            ActivitySetLinkProcessor.Setup setup = new ActivitySetLinkProcessor.Setup();
-
-            // Type here API names of necessary fields and record types
-            setup.linkRDField = 'RDLink__c'; // <--- API name of the field to add remote detailing link
-            setup.applicationIdsField = 'ApplicationIds__c'; // <--- API name of the field to collect application Ids
-            setup.selfDetailingRecordTypes = new List<String>{'Visit', 'SmartAudit'}; // <--- API name(s) of record types of an Activity object for Self Detailing flow
-            setup.remoteDetailingRecordTypes = new List<String>{'JointVisit'}; // <--- API name(s) of record types of an Activity object for Remote Detailing flow
-
-            String setupJSON = JSON.serialize(setup);
-
-            Set<Id> activityIdsForAddLink = ActivitySetLinkProcessor.getActivityIdsForAddLink(Trigger.new, setup.selfDetailingRecordTypes, setup.remoteDetailingRecordTypes);
-
-            if(!activityIdsForAddLink.isEmpty() && ActivitySetLinkProcessor.checkBeforeRun(setup)){
-                ActivitySetLinkProcessor.updateSessionInfo(activityIdsForAddLink, setupJSON);
-            }
-
+        if (!System.isFuture() && !System.isBatch()) { 
+                Setup setup = new Setup();
+            
+                // Type here API names of necessary record types
+                setup.selfDetailingRecordTypes = new List<String>{'Timeoff'}; // <--- API name(s) of record types of an Activity object for Self Detailing flow
+                setup.remoteDetailingRecordTypes = new List<String>{'Visit'}; // <--- API name(s) of record types of an Activity object for Remote Detailing flow
+    
+                String setupJSON = JSON.serialize(setup); 
+                clm.ActivityProcessHandler ph = new clm.ActivityProcessHandler(setupJSON, Trigger.new);
         }
     }
+    
+    public class Setup {
+        public List<String> selfDetailingRecordTypes = new List<String>();
+        public List<String> remoteDetailingRecordTypes = new List<String>();
+    }
+    
 }

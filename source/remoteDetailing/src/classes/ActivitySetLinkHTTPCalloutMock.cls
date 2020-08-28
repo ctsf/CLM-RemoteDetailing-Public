@@ -25,20 +25,20 @@ global class ActivitySetLinkHTTPCalloutMock implements HttpCalloutMock {
 
         HttpResponse response = new HttpResponse();
         response.setStatusCode(200);
-        List<ActivitySetLinkProcessor.VisitItem> visitItems = new List<ActivitySetLinkProcessor.VisitItem>();
+        List<VisitItem> visitItems = new List<VisitItem>();
 
         if(visitIds.size() > 0){
-            ActivitySetLinkProcessor.VisitItem visitItemWithRoomId = getVisitItem(visitIds[0]);
+            VisitItem visitItemWithRoomId = getVisitItem(visitIds[0]);
             visitItemWithRoomId.room_id = 'roomId123';
             visitItems.add(visitItemWithRoomId);
         }
 
 
         if(visitIds.size() > 1){
-            ActivitySetLinkProcessor.VisitItem visitItemWithApps = getVisitItem(visitIds[1]);
-            ActivitySetLinkProcessor.AppItem appItem = new ActivitySetLinkProcessor.AppItem();
+            VisitItem visitItemWithApps = getVisitItem(visitIds[1]);
+            AppItem appItem = new AppItem();
             appItem.room_id = 'appRoomId123';
-            visitItemWithApps.apps = new List<ActivitySetLinkProcessor.AppItem>{appItem};
+            visitItemWithApps.apps = new List<AppItem>{appItem};
             visitItems.add(visitItemWithApps);
         }
 
@@ -69,11 +69,25 @@ global class ActivitySetLinkHTTPCalloutMock implements HttpCalloutMock {
         return visitIds;
     }
 
-    private static ActivitySetLinkProcessor.VisitItem getVisitItem(String visitId) {
-        ActivitySetLinkProcessor.VisitItem visitItem = new ActivitySetLinkProcessor.VisitItem();
+    private static VisitItem getVisitItem(String visitId) {
+        VisitItem visitItem = new VisitItem();
         visitItem.visit_id = visitId;
 
         return visitItem;
     }
+	
+	
+        class VisitItem {
+            public String user_id;
+            public String room_id;
+            public String visit_id;
+            public String app_id;
+            public AppItem[] apps;  	
+        }
+		
+        class AppItem {
+            public String app_id;
+            public String room_id;  	
+        }
 
 }
